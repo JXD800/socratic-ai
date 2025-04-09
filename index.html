@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Socratic AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-100 min-h-screen flex flex-col items-center justify-center p-4">
+    <div class="w-full max-w-xl bg-white rounded-2xl shadow-xl p-6">
+      <h1 class="text-2xl font-bold text-center text-gray-800 mb-4">Socratic AI</h1>
+      <div class="mb-4">
+        <label for="question" class="block text-sm font-medium text-gray-700">Ask a question</label>
+        <textarea id="question" rows="4" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="What is the meaning of life?"></textarea>
+      </div>
+      <button onclick="askSocratic()" class="w-full bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 transition">Ask the Socratic AI</button>
+      <div class="mt-6">
+        <h2 class="text-lg font-semibold text-gray-800">Response:</h2>
+        <div id="response" class="mt-2 bg-gray-50 p-4 rounded-lg text-gray-800"></div>
+      </div>
+    </div>
+
+    <script>
+      async function askSocratic() {
+        const question = document.getElementById('question').value;
+        const responseDiv = document.getElementById('response');
+
+        if (!question) {
+          responseDiv.textContent = 'Please enter a question.';
+          return;
+        }
+
+        responseDiv.textContent = 'Thinking...';
+
+        try {
+          const res = await fetch('/api/ask', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ question })
+          });
+
+          const data = await res.json();
+          responseDiv.textContent = data.reply || 'No response from the Socratic AI.';
+        } catch (error) {
+          responseDiv.textContent = 'Error: ' + error.message;
+        }
+      }
+    </script>
+  </body>
+</html>
